@@ -26,22 +26,50 @@ var patients = new List<Patient>
         DateOfBirth = new DateOnly(2001, 11, 5),
         Gender = "female",
     },
+    new Patient
+    {
+        Id = 4,
+        FirstName = "Lars",
+        LastName = "Berg",
+        DateOfBirth = new DateOnly(2027, 1, 1),
+        Gender = "male",
+    },
+    new Patient
+    {
+        Id = 5,
+        FirstName = "Lara",
+        LastName = " ",
+        DateOfBirth = new DateOnly(2009, 1, 2),
+        Gender = "female",
+    }
 };
 
 Console.WriteLine("Welcome to HealthConnectStarter!");
 Console.WriteLine($"Registered Patients: {patients.Count}");
 Console.WriteLine();
 
+var validPatients = new List<Patient>();
+var rejectedPatients = new List<RejectedPatient>();
 foreach (var patient in patients)
 {
-    Console.WriteLine($"{patient.Id} {patient.GetFullName()} ({patient.GetInitials()}) - born {patient.DateOfBirth}, {patient.Gender}");
+    try
+    {
+        patient.Validate();
+        Console.WriteLine($"[OK] {patient.Id} {patient.GetFullName()} ({patient.GetInitials()}) - born {patient.DateOfBirth}, {patient.Gender}");
+        validPatients.Add(patient);
+    }
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine($"[REJECTED] {ex.Message}");
+        rejectedPatients.Add(new RejectedPatient(patient, ex.Message));
+    }
 }
-Console.WriteLine();
+Console.WriteLine($"Valid: {validPatients.Count}, Rejected: {rejectedPatients.Count}");
 
-int searchId = 2;
+int searchId = 4;
 Patient? found = null;
 
-foreach (var patient in patients)
+foreach (var patient in validPatients)
 {
     if (patient.Id == searchId)
     {
@@ -60,7 +88,7 @@ else
 }
 
 int femaleCount = 0;
-foreach (var patient in patients)
+foreach (var patient in validPatients)
 {
     if (patient.Gender == "female")
     {
@@ -69,3 +97,8 @@ foreach (var patient in patients)
 }
 
 Console.WriteLine($"Female count: {femaleCount}");
+
+foreach (var rejected in rejectedPatients)
+{
+    Console.WriteLine($"Rejected patient {rejected.Patient.GetFullName()} Reason: {rejected.Reason}");
+}
