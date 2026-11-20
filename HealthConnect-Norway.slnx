@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HealthConnect.Api/HealthConnect.Api.csproj" />
+  </Folder>
+</Solution>
